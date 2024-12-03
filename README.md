@@ -1,6 +1,6 @@
 ## Backup data mongo
 ``` bash
-mongorestore --host localhost --port 27017 --db mydatabase ./backup/Data
+mongorestore --host localhost --port 27017 --db Data ./backup/Data
 ```
 ## File backup
 ```cpp
