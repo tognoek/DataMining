@@ -11,6 +11,13 @@ int main(){
     return 0;
 }
 ```
+## Quy tình chạy
+```bash
+python API/main.py
+```
+```bash
+Golive Server
+```
 ## Docker cho vui không tác dụng
 ## Gõ lệnh vào cmd ngay tại thư mục này
 ```bash
