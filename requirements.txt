@@ -1,0 +1,5 @@
+opencv-python-headless
+ultralytics
+scikit-image
+yt-dlp
+python-dotenv
