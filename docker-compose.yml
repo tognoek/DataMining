@@ -1,0 +1,58 @@
+version: '3'
+services:
+  api_fake:
+    build: 
+     context: ./API_FAKE
+     dockerfile: Dockerfile
+    container_name: my_api_fake_container
+    image: my_api_fake_image    # Đặt tên cho image API FA
+    ports:
+      - "8010:8020"
+    networks:
+      - my_network
+    restart: on-failure
+  db:
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
+    container_name: my_mysql_container  # Đặt tên cho container MySQL
+    image: my_mysql_image    # Đặt tên cho image MySQL
+    ports:
+      - "6603:3306"
+    networks:
+      - my_network
+  db_api:
+    build:
+      context: ./DB_API
+      dockerfile: Dockerfile
+    container_name: my_api_db_container
+    image: my_db_api_image    # Đặt tên cho image DB API
+    ports:
+      - "7000:8000"
+    restart: on-failure
+    networks:
+      - my_network
+  crawl:
+    build:
+      context: ./Crawl
+      dockerfile: Dockerfile
+    container_name: my_scrawl_web_container
+    image: my_scrawl_web_image
+    restart: on-failure
+    ports:
+      - "8070:7080"
+    networks:
+      - my_network
+  web:
+    build:
+      context: ./WEB
+      dockerfile: Dockerfile
+    container_name: my_web_container
+    image: my_web_image
+    ports:
+      - '8000:80'
+    networks:
+      - my_network
+networks:
+  my_network:
+    driver: bridge

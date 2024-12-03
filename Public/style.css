@@ -1,0 +1,10 @@
+#type{
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+}
+
+#tognoek{
+    width: 100%;
+    height: 80%;
+}
