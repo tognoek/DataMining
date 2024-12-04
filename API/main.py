@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from datetime import datetime
 import os
 from flask import Flask, request, jsonify
-from bson import ObjectId
 from flask_cors import CORS
 
 load_dotenv()
@@ -40,6 +39,24 @@ def create_query_month_count_month(year, month):
             "year": year,
             "month": month
         }
+    return query
+def create_query_hour_nguyenhue(date, hour):
+    start_time = f"{hour}:00"
+    end_time = f"{hour}:59"
+    
+    query = {
+        "date": date,
+        "time": {
+            "$gte": start_time,
+            "$lte": end_time
+        }
+    }
+    return query
+
+def create_query_year_month_day(date):
+    query = {
+        "date": date,
+    }
     return query
 
 def execution_query_nguyenhue(query):
@@ -84,9 +101,68 @@ def insert_count_month(year, month, hour, car, motorbike):
     collection_count_month.insert_one(data_dict)
     
 @app.route('/')
+# Cái này của [tognoek]
 def home():
     return "Welcome to the Home Page By Tognoek"
+
+@app.route('/api/year_month_day_hour_count_car_motorbike_all', methods=['GET'])
+# Lấy ra dữ liệu lượng xe ô tô và xe máy di chuyển của một giờ trong ngày
+def get_data_by_hour_in_db_nguyenhue():
+    date = request.args.get('date', None) 
+    hour = request.args.get('hour', None) 
+    if date and hour:
+        query = create_query_hour_nguyenhue(date, int(hour))
+        print(query)
+        data = execution_query_nguyenhue(query)
+        if data:
+            result = []
+            for item in data:
+                minute = int(item['time'].split(':')[1])
+                count_car = item['car_left'] + item['car_right']
+                count_motorbike = item['motorbike_left'] + item['motorbike_right']
+                result.append({
+                    'hour': hour,
+                    'minute': minute,
+                    'car': count_car,
+                    'motorbike': count_motorbike,
+                    'temper': item['temper'],
+                    'rain': item['rain']
+                })
+            return jsonify(result)
+        else:
+            return jsonify({"error": "No data found"}), 404
+    return jsonify({"error": "Missing both parameters"}), 400
+
+
+@app.route('/api/year_month_day_car_motorbike', methods=['GET'])
+# Lấy ra dữ liệu lượng xe ô tô và xe máy di chuyển trái phải của một ngày trong năm
+def get_data_by_day_in_db_nguyenhue():
+    date = request.args.get('date', None) 
+    hour = request.args.get('hour', None) 
+    if date and hour:
+        query = create_query_hour_nguyenhue(date, int(hour))
+        print(query)
+        data = execution_query_nguyenhue(query)
+        if data:
+            result = []
+            for item in data:
+                result.append({
+                    'car_left': item['car_left'],
+                    'car_right': item['car_right'],
+                    'car_stand': item['car_stand'],
+                    'motorbike_left': item['motorbike_left'],
+                    'motorbike_right': item['motorbike_right'],
+                    'motorbike_stand': item['motorbike_stand'],
+                    'tempr': item['temper'],
+                    'rain': item['rain']
+                })
+            return jsonify(result)
+        else:
+            return jsonify({"error": "No data found"}), 404
+    return jsonify({"error": "Missing both parameters"}), 400
+
 @app.route('/api/year_month_count_car_motorbike_all', methods=['GET'])
+# Lấy ra dữ liệu lượng xe di chuyern của một tháng trong năm
 def get_data():
     year = request.args.get('year', None) 
     month = request.args.get('month', None) 
@@ -113,6 +189,7 @@ def get_data():
     return jsonify({"error": "Missing both parameters"}), 400
 
 @app.route('/api/year_month_count_car_motorbike', methods=['GET'])
+# Lấy dữ liệu lượng xe ô tô và di chuyển của một tháng trông năm đã đưọc tính tổng lại
 def api_get_year_month_count_car_motorbike():
     year = request.args.get('year', None) 
     month = request.args.get('month', None) 
@@ -135,11 +212,8 @@ def api_get_year_month_count_car_motorbike():
     return jsonify({"error": "Missing both parameters"}), 400
 
 
-@app.route('/api/data', methods=['POST'])
-def api_ost_data():
-    new_data = request.get_json()
-    
 @app.route('/api/insert_count_month', methods=['POST'])
+# Chèn dữ liệu vào bảng tổng xe di chuyển theo giờ của một tháng trong năm
 def api_post_insert_count_month():
     try:
         data = request.get_json()

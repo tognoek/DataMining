@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biểu đồ xe cộ theo giờ</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h3>Menu</h3>
+      <a href="index.html">Về nhà của em</a>
+      <a href="#">Liên kết 3</a>
+      <a href="#">Liên kết 4</a>
+      <a href="#">Liên kết 5</a>
+      <a href="#">Liên kết 6</a>
+      <a href="#">Liên kết 7</a>
+      <a href="#">Liên kết 8</a>
+    </div>
+
+    <div class="main-content">
+      <div id="type">
+        <h1>Biểu đồ dữ liệu xe cộ theo giờ</h1>
+
+        <label for="dateSelect">Chọn ngày:</label>
+        <input type="date" value="2024-11-30" id="dateSelect" />
+
+        <label for="hourSelect">Chọn giờ:</label>
+        <input type="time" value="11:00" id="hourSelect" step="3600" />
+
+        <button id="loadDataButton">Tải dữ liệu</button>
+      </div>
+      <div id="tognoek">
+        <canvas id="myChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+    <script src="xetheogio.js"></script>
+  </body>
+</html>

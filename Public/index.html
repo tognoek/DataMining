@@ -8,13 +8,48 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <div id="type">
-        <h1>Biểu đồ dữ liệu tổng quan</h1>
-    </div>
-    <div id="tognoek">
-      <canvas id="myChart" width="400" height="200"></canvas>
+    <div class="sidebar">
+      <h3>Menu</h3>
+      <a href="xetheogio.html">Biểu độ lượng xe theo giờ</a>
+      <a href="#">Liên kết 3</a>
+      <a href="#">Liên kết 4</a>
+      <a href="#">Liên kết 5</a>
+      <a href="#">Liên kết 6</a>
+      <a href="#">Liên kết 7</a>
+      <a href="#">Liên kết 8</a>
     </div>
 
+    <div class="main-content">
+      <div id="type">
+        <h1>Biểu đồ dữ liệu tổng quan</h1>
+        <label for="yearSelect">Chọn năm:</label>
+        <select id="yearSelect">
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024" selected>2024</option>
+        </select>
+
+        <label for="monthSelect">Chọn tháng:</label>
+        <select id="monthSelect">
+          <option value="1">Tháng 1</option>
+          <option value="2">Tháng 2</option>
+          <option value="3">Tháng 3</option>
+          <option value="4">Tháng 4</option>
+          <option value="5">Tháng 5</option>
+          <option value="6">Tháng 6</option>
+          <option value="7">Tháng 7</option>
+          <option value="8">Tháng 8</option>
+          <option value="9">Tháng 9</option>
+          <option value="10">Tháng 10</option>
+          <option value="11" selected>Tháng 11</option>
+          <option value="12">Tháng 12</option>
+        </select>
+        <button id="loadDataButton">Tải dữ liệu</button>
+      </div>
+      <div id="tognoek">
+        <canvas id="myChart" width="400" height="200"></canvas>
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
