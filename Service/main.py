@@ -48,8 +48,8 @@ def process(year, month, url_get, url_post):
 
 
 def count_car_motorbike_month(year, month):
-    url_get = 'http://127.0.0.1:5000/api/year_month_count_car_motorbike_all'
-    url_post = 'http://127.0.0.1:5000/api/insert_count_month'
+    url_get = 'http://127.0.0.1:8000/api/year_month_count_car_motorbike_all'
+    url_post = 'http://127.0.0.1:8000/api/insert_count_month'
     print('Tạo dữ liệu theo tháng về số lượng xe di chuyển')
     process(year, month, url_get, url_post)
 

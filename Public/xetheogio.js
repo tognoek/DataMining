@@ -14,7 +14,7 @@ document.getElementById("loadDataButton").addEventListener("click", () => {
 async function drawChart(formattedDate, hour) {
 
   const queryString = `date=${formattedDate}&hour=${hour.slice(0, 2)}`; 
-  const response = await fetch(`http://127.0.0.1:5000/api/year_month_day_hour_count_car_motorbike_all?${queryString}`);
+  const response = await fetch(`http://localhost:7000/api/year_month_day_hour_count_car_motorbike_all?${queryString}`);
 
   if (response.ok) {
     const data = await response.json();

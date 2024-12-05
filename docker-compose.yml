@@ -1,58 +1,54 @@
-version: '3'
+version: "3"
 services:
-  api_fake:
-    build: 
-     context: ./API_FAKE
-     dockerfile: Dockerfile
-    container_name: my_api_fake_container
-    image: my_api_fake_image    # Đặt tên cho image API FA
-    ports:
-      - "8010:8020"
-    networks:
-      - my_network
-    restart: on-failure
-  db:
+  # api_fake:
+  #   build:
+  #    context: ./API_FAKE
+  #    dockerfile: Dockerfile
+  #   container_name: my_api_fake_container
+  #   image: my_api_fake_image    # Đặt tên cho image API FA
+  #   ports:
+  #     - "8010:8020"
+  #   networks:
+  #     - my_network
+  #   restart: on-failure
+  mongodb:
     build:
-      context: ./DB
-      dockerfile: Dockerfile
-    container_name: my_mysql_container  # Đặt tên cho container MySQL
-    image: my_mysql_image    # Đặt tên cho image MySQL
+      context: ./Mongo
+    container_name: mongodb
+    volumes:
+      - mongo_data_volume:/data/db
     ports:
-      - "6603:3306"
-    networks:
-      - my_network
+      - "27017:27017"
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
   db_api:
     build:
-      context: ./DB_API
+      context: ./API
       dockerfile: Dockerfile
     container_name: my_api_db_container
-    image: my_db_api_image    # Đặt tên cho image DB API
+    image: my_db_api_image 
     ports:
-      - "7000:8000"
+      - "7000:5000"
     restart: on-failure
     networks:
       - my_network
-  crawl:
-    build:
-      context: ./Crawl
-      dockerfile: Dockerfile
-    container_name: my_scrawl_web_container
-    image: my_scrawl_web_image
-    restart: on-failure
-    ports:
-      - "8070:7080"
-    networks:
-      - my_network
+    env_file:
+      - .env
   web:
     build:
-      context: ./WEB
+      context: ./Public
       dockerfile: Dockerfile
     container_name: my_web_container
     image: my_web_image
     ports:
-      - '8000:80'
+      - "8000:80"
     networks:
       - my_network
 networks:
   my_network:
     driver: bridge
+
+volumes:
+  mongo_data_volume:  

@@ -11,8 +11,11 @@ const get = (year, month) => {
   if (myChart) {
     myChart.destroy();
   }
-  const apiUrl = `http://127.0.0.1:5000/api/year_month_count_car_motorbike?year=${year}&month=${month}`;
-  fetch(apiUrl)
+  const apiUrl = `http://localhost:7000/api/year_month_count_car_motorbike?year=${year}&month=${month}`;
+  fetch(apiUrl, {
+    method: 'GET',
+    mode: 'no-cors' 
+})
     .then((response) => response.json())
     .then((data) => {
       data.sort((a, b) => a.hour - b.hour);

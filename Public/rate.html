@@ -11,27 +11,25 @@
     <div class="sidebar">
       <h3>Menu</h3>
       <a href="index.html">Về nhà của em</a>
-      <a href="phamcum.html">Phân nhóm xe theo tốc độ trong ngày</a>
+      <a href="xetheogio.html">Biểu độ lượng xe theo giờ</a>
       <a href="phamcumcot.html">Phân cụm theo tốc độ trong ngày [cột]</a>
-      <a href="rate.html">Tỷ lệ hướng di chuyển</a>
+      <a href="phamcum.html">Phân nhóm xe theo tốc độ trong ngày</a>
     </div>
 
     <div class="main-content">
       <div id="type">
-        <h1>Biểu đồ dữ liệu xe cộ theo giờ</h1>
+        <h1>Biểu đồ dữ liệu tỷ lệ di chuyển</h1>
 
         <label for="dateSelect">Chọn ngày:</label>
         <input type="date" value="2024-11-30" id="dateSelect" />
-
-        <label for="hourSelect">Chọn giờ:</label>
-        <input type="time" value="11:00" id="hourSelect" step="3600" />
-
         <button id="loadDataButton">Tải dữ liệu</button>
       </div>
       <div id="tognoek">
-        <canvas id="myChart" width="400" height="200"></canvas>
+        <canvas id="carChart"></canvas>
+        <canvas id="motorbikeChart"></canvas>
+        <canvas id="standChart"></canvas>
       </div>
     </div>
-    <script src="xetheogio.js"></script>
+    <script src="rate.js"></script>
   </body>
 </html>
