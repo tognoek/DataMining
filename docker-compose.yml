@@ -1,44 +1,59 @@
 version: "3"
 services:
-  # api_fake:
-  #   build:
-  #    context: ./API_FAKE
-  #    dockerfile: Dockerfile
-  #   container_name: my_api_fake_container
-  #   image: my_api_fake_image    # Đặt tên cho image API FA
-  #   ports:
-  #     - "8010:8020"
-  #   networks:
-  #     - my_network
-  #   restart: on-failure
   mongodb:
     build:
-      context: ./Mongo
+      context: ./src/Mongo
     container_name: mongodb
     volumes:
       - mongo_data_volume:/data/db
     ports:
       - "27017:27017"
     restart: always
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=
-      - MONGO_INITDB_ROOT_PASSWORD=
+    networks:
+      - my_network 
+  # data:
+  #   build:
+  #     context: ./src/Data
+  #     dockerfile: Dockerfile
+  #   container_name: my_data_container
+  #   image: my_data_image
+  #   ports:
+  #     - "7770:5505"
+  #   restart: on-failure
+  #   networks:
+  #     - my_network 
+  #   env_file:
+  #     - .env
+  service:
+    build:
+      context: ./src/Service
+      dockerfile: Dockerfile
+    container_name: my_service_container
+    image: my_service_image
+    ports:
+      - "7070:5000"
+    restart: on-failure
+    networks:
+      - my_network 
+    env_file:
+      - .env
   db_api:
     build:
-      context: ./API
+      context: ./src/API
       dockerfile: Dockerfile
     container_name: my_api_db_container
-    image: my_db_api_image 
+    image: my_db_api_image
     ports:
       - "7000:5000"
     restart: on-failure
     networks:
-      - my_network
+      - my_network 
     env_file:
       - .env
+
   web:
     build:
-      context: ./Public
+      context: ./src/Public
       dockerfile: Dockerfile
     container_name: my_web_container
     image: my_web_image
@@ -46,9 +61,19 @@ services:
       - "8000:80"
     networks:
       - my_network
+  app:
+    container_name: my_app_container_log
+    image: alpine  
+    volumes:
+      - ./logs:/app/logs  
+    command: tail -f /dev/null 
+    networks:
+      - my_network
+
+
 networks:
   my_network:
-    driver: bridge
+    driver: bridge 
 
 volumes:
-  mongo_data_volume:  
+  mongo_data_volume:

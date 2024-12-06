@@ -8,6 +8,8 @@ import yt_dlp
 import threading
 import queue
 from datetime import datetime
+import requests
+import json
 
 output_dir = os.getenv("OUT")
 
@@ -16,6 +18,72 @@ os.makedirs(output_dir, exist_ok=True)
 ydl_opts = {
     'format': 'best',
 }
+
+def get_weather():
+    api_key = "e2672e1f1879800514ec12404c0e22be"  
+    lat = "16.0682"  
+    lon = "108.2156"
+    url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status() 
+        weather_data = response.json()
+        weather = weather_data['weather'][0]['description']
+        temperature = weather_data['main']['temp']
+        rain = weather_data.get('rain', {}).get('1h', 0) 
+        is_rain = 1 if rain > 0 else 0  
+        
+        return temperature, is_rain
+    
+    except requests.exceptions.HTTPError as http_err:
+        print(f"Lỗi HTTP: {http_err}")
+    except Exception as err:
+        print(f"Lỗi khác: {err}")
+    
+    return None, 0  
+
+
+def post_data_to_api():
+    url = "http://localhost:5000/api/insert"
+    values = list(data[0].values())
+    temperature, is_rain = get_weather()
+    rate_car = (values[4] + values[5]) * values[10]
+    rate_moto = (values[7] + values[8]) * values[11]
+    if rate_car == 0:
+        speed_car = 0
+    else:
+        speed_car = values[2] / rate_car
+    speed_car = speed_car if speed_car < 55 else 56
+    if rate_car == 0:
+        speed_moto = 0
+    else:
+        speed_moto = values[3] / rate_moto
+    speed_moto = speed_moto if speed_moto < 55 else 50
+    data = {
+        "date": values[0],
+        "time": values[1],
+        "car_left": values[4],
+        "car_right": values[5],
+        "car_stand": values[6],
+        "car_speed": speed_car,
+        "motorbike_left": values[7],
+        "motorbike_right": values[8],
+        "motorbike_stand": values[9],
+        "motorbike_speed": speed_moto,
+        "temper": temperature,
+        "rain": is_rain
+    }
+    try:
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            print("Dữ liệu đã được gửi thành công!")
+            print("Phản hồi từ server:", response.json())
+        else:
+            print(f"Lỗi! Mã trạng thái: {response.status_code}")
+            print("Thông tin lỗi:", response.text)
+    except requests.exceptions.RequestException as e:
+        print("Lỗi trong quá trình gửi yêu cầu:", str(e))
+
 def save_video_segment(cap, video_index, fps, frame_width, frame_height, video_queue):
     video_path = os.path.join(output_dir, f"video_{video_index:03d}.mp4")
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -48,7 +116,7 @@ def handle_video(video_queue):
         hour = now.hour  # Giờ (0-23)
         minute = now.minute
         data = kernel.url(f"{video_path}", formatted_today, hour, minute)
-        print(data)
+        post_data_to_api(data)
         if os.path.exists(video_path):
             os.remove(video_path)
             print(f"Đã xóa video: {video_path}")

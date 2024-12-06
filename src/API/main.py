@@ -4,12 +4,20 @@ from datetime import datetime
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+# import logging
 
 load_dotenv()
 
-MONGODB_URL = os.getenv("MONGODB_URL")
+# logging.basicConfig(
+#     filename="logs/api.log",  
+    # level=logging.INFO,      
+#     format="%(asctime)s - %(levelname)s - %(message)s",  
+#     datefmt="%Y-%m-%d %H:%M:%S",  
+# )
 
-# MONGODB_URL = "mongodb://localhost:27017/"
+# logging.info("Ứng dụng đã bắt đầu")
+
+MONGODB_URL = os.getenv("MONGODB_URL")
 MONGODB_NAME = os.getenv("MONGODB_NAME")
 MONGODB_NGUYENHUE = os.getenv("MONGODB_NGUYENHUE")
 MONGODB_COUNT_MONTH = os.getenv("MONGODB_COUNT_MONTH")
@@ -17,11 +25,20 @@ MONGODB_CLUS = os.getenv("MONGODB_CLUS")
 MONGO_DB_RATE_LEFT_RIGHT = os.getenv("MONGO_DB_RATE_LEFT_RIGHT")
 print(MONGODB_URL, MONGODB_NAME)
 app = Flask(__name__)
-# CORS(app)
 
 CORS(app, resources={r"*": {"origins": "*"}}) 
 
-client = MongoClient('mongodb://mongodb:27017')  
+client = MongoClient("mongodb://mongodb:27017/")
+
+try:
+    # Kiểm tra thông tin server
+    client.admin.command('ping')
+    print("Kết nối MongoDB thành công!")
+except ConnectionError as e:
+    print(f"Lỗi kết nối MongoDB: {e}")
+except Exception as e:
+    print(f"Có lỗi xảy ra: {e}")
+    
 db = client[MONGODB_NAME] 
 collection_nguyenhue = db[MONGODB_NGUYENHUE]
 collection_count_month = db[MONGODB_COUNT_MONTH]
@@ -187,6 +204,7 @@ def get_data_by_hour_in_db_rate():
             return jsonify(result)
         else:
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 @app.route('/api/year_month_day_hour_count_car_motorbike_all', methods=['GET'])
 # Lấy ra dữ liệu lượng xe ô tô và xe máy di chuyển của một giờ trong ngày
@@ -212,7 +230,9 @@ def get_data_by_hour_in_db_nguyenhue_count_all():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 
 
@@ -239,7 +259,9 @@ def get_data_by_hour_in_db_nguyenhue():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 @app.route('/api/year_month_day_car_motorbike', methods=['GET'])
 # Lấy ra dữ liệu lượng xe ô tô và xe máy di chuyển trái phải của một ngày trong năm
@@ -269,7 +291,9 @@ def get_data_by_day_in_db_nguyenhue():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 
 @app.route('/api/year_month_day_speed_car_motorbike', methods=['GET'])
@@ -292,7 +316,10 @@ def get_data_by_day_spped_in_db_nguyenhue():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 
 @app.route('/api/year_month_count_car_motorbike_all', methods=['GET'])
@@ -319,7 +346,9 @@ def get_data():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 
 @app.route('/api/year_month_count_car_motorbike', methods=['GET'])
@@ -342,7 +371,9 @@ def api_get_year_month_count_car_motorbike():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
 
 @app.route('/api/year_month_day_clustering_speed_time', methods=['GET'])
@@ -363,9 +394,34 @@ def api_get_year_month_date_clustering():
                 })
             return jsonify(result)
         else:
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "No data found"}), 404
+    # logging.error("Lỗi xảy ra trong ứng dụng")
     return jsonify({"error": "Missing both parameters"}), 400
-
+@app.route('/api/insert', methods=['POST'])
+# Chèn dữ liệu vào bảng chinh
+def api_post_insert_big_data():
+    try:
+        data = request.get_json()
+        date = data.get('date')
+        time = data.get('time')
+        car_left = data.get('car_left')
+        car_right = data.get('car_right')
+        car_stand = data.get('car_stand')
+        car_speed = data.get('car_speed')
+        motorbike_left = data.get('motorbike_left')
+        motorbike_right = data.get('motorbike_right')
+        motorbike_stand = data.get('motorbike_stand')
+        motorbike_speed = data.get('motorbike_speed')
+        temper = data.get('temper')
+        rain = data.get('rain')
+        insert(date, time, car_left, car_right, car_stand, car_speed, motorbike_left, motorbike_right, motorbike_stand, motorbike_speed, temper, rain)
+        
+        # logging.info("Chèn vào bảng chính thành công")
+        return jsonify({"message": "Dữ liệu đã được chèn thành công!"}), 200
+    except Exception as e:
+        # logging.error("Lỗi xảy ra trong ứng dụng")
+        return jsonify({"error": str(e)}), 500
 @app.route('/api/insert_count_month', methods=['POST'])
 # Chèn dữ liệu vào bảng tổng xe di chuyển theo giờ của một tháng trong năm
 def api_post_insert_count_month():
@@ -378,11 +434,14 @@ def api_post_insert_count_month():
         motorbike = data.get('motorbike')
 
         if not all([year, month, car, motorbike]):
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "Thiếu dữ liệu đầu vào"}), 400
         insert_count_month(year, month, hour, car, motorbike)
 
+        # logging.info("Chèn vào bảng tính theo tháng thành công")
         return jsonify({"message": "Dữ liệu đã được chèn thành công!"}), 200
     except Exception as e:
+        # logging.error("Lỗi xảy ra trong ứng dụng")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/insert_collision_clustering', methods=['POST'])
@@ -398,10 +457,13 @@ def api_post_insert_collision_clustering():
         car_speed = data.get('car_speed')
         motorbike_speed = data.get('motorbike_speed')
         if not all([year, month, day, car_speed, motorbike_speed]):
+            # logging.error("Lỗi xảy ra trong ứng dụng")
             return jsonify({"error": "Thiếu dữ liệu đầu vào"}), 400
         insert_collision_clustering(year, month, day, hour, cluster_id, car_speed, motorbike_speed)
+        # logging.info("Chèn vào bảng phân cụmg thành công")
         return jsonify({"message": "Dữ liệu đã được chèn thành công!"}), 200
     except Exception as e:
+        # logging.error("Lỗi xảy ra trong ứng dụng")
         return jsonify({"error": str(e)}), 500
 @app.route('/api/insert_rate_left_right', methods=['POST'])
 # Chèn dữ liệu và gọi hàm insert_rate_left_right
@@ -420,10 +482,11 @@ def insert_rate():
             data['motorbike_left_ratio'], data['motorbike_right_ratio'],
             data['car_stand_ratio'], data['motorbike_stand_ratio']
         )
-
+        # logging.info("Chèn vào bảng rate thành công")
         return jsonify({"message": "Data inserted successfully!"}), 200
 
     except Exception as e:
+        # logging.error("Lỗi xảy ra trong ứng dụng")
         return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000) 

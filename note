@@ -5,3 +5,4 @@ docker exec -it mongodb bash
 mongosh
 show dbs;
 docker run --rm -v /var/lib/mongodb:/source -v mongo_mongo_data_volume:/data/db busybox cp -r /source/. /data/db
+docker inspect <container_id>
