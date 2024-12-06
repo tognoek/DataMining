@@ -34,7 +34,6 @@ docker-compose up --build -d
 ├── docker-compose.yml
 ├── logs
 │   └── api.log
-├── requirements.txt
 ├── src
 │   ├── API
 │   │   ├── Dockerfile
@@ -65,7 +64,5 @@ docker-compose up --build -d
 │       ├── Dockerfile
 │       ├── main.py
 │       └── requirements.txt
-└── yolov8n.pt
-
-
+└── requirements.txt
 ```

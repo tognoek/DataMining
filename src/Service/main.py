@@ -244,14 +244,11 @@ def ap_api():
 def api_tognoek():
     key = request.args.get('key', None) 
     if key == 1:
-        print(123)
-        # count_car_motorbike_month(2024, 11)
+        count_car_motorbike_month(2024, 11)
     if key == 2:
-        print(345)
-        # process_and_save_data("2024/11/30")
+        process_and_save_data("2024/11/30")
     if key == 3:
-        print(567)
-        # clus("2024/11/30")
+        clus("2024/11/30")
     return 'Xin chao cac ban!!'
 def start_loop():
     loop_thread = threading.Thread(target=loop)
